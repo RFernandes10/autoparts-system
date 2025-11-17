@@ -202,7 +202,7 @@ function ProdutosPage() {
                 </span>
               </div>
               {produto.estoqueAtual <= produto.estoqueMinimo && (
-                <div className="alerta-estoque">⚠️ Estoque Baixo!</div>
+                <div className="alerta-estoque">Estoque Baixo!</div>
               )}
             </div>
 
@@ -242,13 +242,13 @@ function ProdutosPage() {
                 className="btn-editar"
                 onClick={() => handleEditarProduto(produto)}
               >
-                ✏️ Editar
+                Editar
               </button>
               <button
                 className="btn-deletar"
                 onClick={() => handleDeletarProduto(produto)}
               >
-                🗑️ Excluir
+                Excluir
               </button>
             </div>
           </div>

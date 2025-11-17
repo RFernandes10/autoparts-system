@@ -51,6 +51,7 @@ export interface CompatibilidadeVeiculo {
 }
 
 export interface EspecificacaoBateria {
+  length: number;
   id: number;
   produtoId: number;
   amperagem: string;
