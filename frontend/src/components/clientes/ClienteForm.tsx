@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { Cliente } from '../../types';
+import { 
+  FaTimes, 
+  FaUser, 
+  FaIdCard, 
+  FaPhone, 
+  FaEnvelope, 
+  FaMapMarkerAlt 
+} from 'react-icons/fa';
 import './ClienteForm.css';
 
 interface ClienteFormProps {
@@ -45,14 +53,12 @@ function ClienteForm({ cliente, onSave, onCancel }: ClienteFormProps) {
     const numbers = value.replace(/\D/g, '');
     
     if (numbers.length <= 11) {
-      // CPF: 000.000.000-00
       return numbers
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d{1,2})/, '$1-$2')
         .replace(/(-\d{2})\d+?$/, '$1');
     } else {
-      // CNPJ: 00.000.000/0000-00
       return numbers
         .replace(/(\d{2})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')
@@ -66,13 +72,11 @@ function ClienteForm({ cliente, onSave, onCancel }: ClienteFormProps) {
     const numbers = value.replace(/\D/g, '');
     
     if (numbers.length <= 10) {
-      // Telefone fixo: (00) 0000-0000
       return numbers
         .replace(/(\d{2})(\d)/, '($1) $2')
         .replace(/(\d{4})(\d)/, '$1-$2')
         .replace(/(-\d{4})\d+?$/, '$1');
     } else {
-      // Celular: (00) 00000-0000
       return numbers
         .replace(/(\d{2})(\d)/, '($1) $2')
         .replace(/(\d{5})(\d)/, '$1-$2')
@@ -127,8 +131,8 @@ function ClienteForm({ cliente, onSave, onCancel }: ClienteFormProps) {
     if (validate()) {
       const clienteData = {
         nome: formData.nome.trim(),
-        cpfCnpj: formData.cpfCnpj.replace(/\D/g, ''), // Remove formatação
-        telefone: formData.telefone.replace(/\D/g, ''), // Remove formatação
+        cpfCnpj: formData.cpfCnpj.replace(/\D/g, ''),
+        telefone: formData.telefone.replace(/\D/g, ''),
         email: formData.email.trim() || undefined,
         endereco: formData.endereco.trim() || undefined,
       };
@@ -138,85 +142,114 @@ function ClienteForm({ cliente, onSave, onCancel }: ClienteFormProps) {
   };
 
   return (
-    <div className="cliente-form-overlay">
-      <div className="cliente-form-container">
-        <div className="form-header">
-          <h2>{cliente ? '✏️ Editar Cliente' : '➕ Novo Cliente'}</h2>
-          <button className="btn-close" onClick={onCancel}>✕</button>
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-content cliente-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>
+            <FaUser className="header-icon" />
+            {cliente ? 'Editar Cliente' : 'Novo Cliente'}
+          </h2>
+          <button className="btn-close" onClick={onCancel} type="button">
+            <FaTimes />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="cliente-form">
-          <div className="form-group">
-            <label htmlFor="nome">Nome Completo *</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              className={errors.nome ? 'error' : ''}
-              placeholder="Ex: João da Silva"
-            />
-            {errors.nome && <span className="error-message">{errors.nome}</span>}
-          </div>
+        <form onSubmit={handleSubmit} className="form">
+          <div className="form-section">
+            <h3 className="section-title">Informações do Cliente</h3>
 
-          <div className="form-row">
+            {/* Nome */}
             <div className="form-group">
-              <label htmlFor="cpfCnpj">CPF/CNPJ *</label>
+              <label htmlFor="nome">
+                <FaUser size={12} /> Nome Completo *
+              </label>
               <input
                 type="text"
-                id="cpfCnpj"
-                name="cpfCnpj"
-                value={formData.cpfCnpj}
-                onChange={handleCpfCnpjChange}
-                className={errors.cpfCnpj ? 'error' : ''}
-                placeholder="000.000.000-00 ou 00.000.000/0000-00"
-                disabled={!!cliente}
+                id="nome"
+                name="nome"
+                value={formData.nome}
+                onChange={handleChange}
+                className={errors.nome ? 'error' : ''}
+                placeholder="Ex: João da Silva"
+                autoComplete="name"
               />
-              {errors.cpfCnpj && <span className="error-message">{errors.cpfCnpj}</span>}
+              {errors.nome && <span className="error-message">{errors.nome}</span>}
             </div>
 
+            {/* CPF/CNPJ e Telefone */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="cpfCnpj">
+                  <FaIdCard size={12} /> CPF/CNPJ *
+                </label>
+                <input
+                  type="text"
+                  id="cpfCnpj"
+                  name="cpfCnpj"
+                  value={formData.cpfCnpj}
+                  onChange={handleCpfCnpjChange}
+                  className={errors.cpfCnpj ? 'error' : ''}
+                  placeholder="000.000.000-00"
+                  disabled={!!cliente}
+                  autoComplete="off"
+                />
+                {errors.cpfCnpj && <span className="error-message">{errors.cpfCnpj}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="telefone">
+                  <FaPhone size={12} /> Telefone *
+                </label>
+                <input
+                  type="text"
+                  id="telefone"
+                  name="telefone"
+                  value={formData.telefone}
+                  onChange={handleTelefoneChange}
+                  className={errors.telefone ? 'error' : ''}
+                  placeholder="(00) 00000-0000"
+                  autoComplete="tel"
+                />
+                {errors.telefone && <span className="error-message">{errors.telefone}</span>}
+              </div>
+            </div>
+
+            {/* E-mail */}
             <div className="form-group">
-              <label htmlFor="telefone">Telefone *</label>
+              <label htmlFor="email">
+                <FaEnvelope size={12} /> E-mail
+              </label>
               <input
-                type="text"
-                id="telefone"
-                name="telefone"
-                value={formData.telefone}
-                onChange={handleTelefoneChange}
-                className={errors.telefone ? 'error' : ''}
-                placeholder="(00) 00000-0000"
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={errors.email ? 'error' : ''}
+                placeholder="exemplo@email.com"
+                autoComplete="email"
               />
-              {errors.telefone && <span className="error-message">{errors.telefone}</span>}
+              {errors.email && <span className="error-message">{errors.email}</span>}
+            </div>
+
+            {/* Endereço */}
+            <div className="form-group">
+              <label htmlFor="endereco">
+                <FaMapMarkerAlt size={12} /> Endereço Completo
+              </label>
+              <textarea
+                id="endereco"
+                name="endereco"
+                value={formData.endereco}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Rua, Número, Bairro, Cidade - Estado"
+                autoComplete="street-address"
+              />
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? 'error' : ''}
-              placeholder="exemplo@email.com"
-            />
-            {errors.email && <span className="error-message">{errors.email}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="endereco">Endereço Completo</label>
-            <textarea
-              id="endereco"
-              name="endereco"
-              value={formData.endereco}
-              onChange={handleChange}
-              rows={3}
-              placeholder="Rua, Número, Bairro, Cidade - Estado"
-            />
-          </div>
-
+          {/* Botões de Ação */}
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={onCancel}>
               Cancelar

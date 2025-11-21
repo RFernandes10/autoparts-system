@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
 import type { Fornecedor } from '../../types';
+import { 
+  FaTimes, 
+  FaBuilding, 
+  FaIdCard, 
+  FaPhone, 
+  FaEnvelope, 
+  FaMapMarkerAlt,
+  FaTruck
+} from 'react-icons/fa';
 import './FornecedorForm.css';
 
 interface FornecedorFormProps {
@@ -125,85 +134,114 @@ function FornecedorForm({ fornecedor, onSave, onCancel }: FornecedorFormProps) {
   };
 
   return (
-    <div className="fornecedor-form-overlay">
-      <div className="fornecedor-form-container">
-        <div className="form-header">
-          <h2>{fornecedor ? '✏️ Editar Fornecedor' : '➕ Novo Fornecedor'}</h2>
-          <button className="btn-close" onClick={onCancel}>✕</button>
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-content fornecedor-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>
+            <FaTruck className="header-icon" />
+            {fornecedor ? 'Editar Fornecedor' : 'Novo Fornecedor'}
+          </h2>
+          <button className="btn-close" onClick={onCancel} type="button">
+            <FaTimes />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="fornecedor-form">
-          <div className="form-group">
-            <label htmlFor="nome">Nome da Empresa *</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              className={errors.nome ? 'error' : ''}
-              placeholder="Ex: AutoPeças Brasil Ltda"
-            />
-            {errors.nome && <span className="error-message">{errors.nome}</span>}
-          </div>
+        <form onSubmit={handleSubmit} className="form">
+          <div className="form-section">
+            <h3 className="section-title">Informações do Fornecedor</h3>
 
-          <div className="form-row">
+            {/* Nome da Empresa */}
             <div className="form-group">
-              <label htmlFor="cnpj">CNPJ *</label>
+              <label htmlFor="nome">
+                <FaBuilding size={12} /> Nome da Empresa *
+              </label>
               <input
                 type="text"
-                id="cnpj"
-                name="cnpj"
-                value={formData.cnpj}
-                onChange={handleCnpjChange}
-                className={errors.cnpj ? 'error' : ''}
-                placeholder="00.000.000/0000-00"
-                disabled={!!fornecedor}
+                id="nome"
+                name="nome"
+                value={formData.nome}
+                onChange={handleChange}
+                className={errors.nome ? 'error' : ''}
+                placeholder="Ex: AutoPeças Brasil Ltda"
+                autoComplete="organization"
               />
-              {errors.cnpj && <span className="error-message">{errors.cnpj}</span>}
+              {errors.nome && <span className="error-message">{errors.nome}</span>}
             </div>
 
+            {/* CNPJ e Telefone */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="cnpj">
+                  <FaIdCard size={12} /> CNPJ *
+                </label>
+                <input
+                  type="text"
+                  id="cnpj"
+                  name="cnpj"
+                  value={formData.cnpj}
+                  onChange={handleCnpjChange}
+                  className={errors.cnpj ? 'error' : ''}
+                  placeholder="00.000.000/0000-00"
+                  disabled={!!fornecedor}
+                  autoComplete="off"
+                />
+                {errors.cnpj && <span className="error-message">{errors.cnpj}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="telefone">
+                  <FaPhone size={12} /> Telefone *
+                </label>
+                <input
+                  type="text"
+                  id="telefone"
+                  name="telefone"
+                  value={formData.telefone}
+                  onChange={handleTelefoneChange}
+                  className={errors.telefone ? 'error' : ''}
+                  placeholder="(00) 00000-0000"
+                  autoComplete="tel"
+                />
+                {errors.telefone && <span className="error-message">{errors.telefone}</span>}
+              </div>
+            </div>
+
+            {/* E-mail */}
             <div className="form-group">
-              <label htmlFor="telefone">Telefone *</label>
+              <label htmlFor="email">
+                <FaEnvelope size={12} /> E-mail
+              </label>
               <input
-                type="text"
-                id="telefone"
-                name="telefone"
-                value={formData.telefone}
-                onChange={handleTelefoneChange}
-                className={errors.telefone ? 'error' : ''}
-                placeholder="(00) 00000-0000"
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={errors.email ? 'error' : ''}
+                placeholder="contato@empresa.com"
+                autoComplete="email"
               />
-              {errors.telefone && <span className="error-message">{errors.telefone}</span>}
+              {errors.email && <span className="error-message">{errors.email}</span>}
+            </div>
+
+            {/* Endereço */}
+            <div className="form-group">
+              <label htmlFor="endereco">
+                <FaMapMarkerAlt size={12} /> Endereço Completo
+              </label>
+              <textarea
+                id="endereco"
+                name="endereco"
+                value={formData.endereco}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Rua, Número, Bairro, Cidade - Estado"
+                autoComplete="street-address"
+              />
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? 'error' : ''}
-              placeholder="contato@empresa.com"
-            />
-            {errors.email && <span className="error-message">{errors.email}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="endereco">Endereço Completo</label>
-            <textarea
-              id="endereco"
-              name="endereco"
-              value={formData.endereco}
-              onChange={handleChange}
-              rows={3}
-              placeholder="Rua, Número, Bairro, Cidade - Estado"
-            />
-          </div>
-
+          {/* Botões de Ação */}
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={onCancel}>
               Cancelar

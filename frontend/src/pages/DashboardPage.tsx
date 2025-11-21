@@ -1,14 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { produtoService } from '../services/produtoService';
 import type { Produto } from '../types';
-import { FaTools, FaCarBattery } from 'react-icons/fa';
+import { 
+  FaBoxes, 
+  FaExclamationTriangle, 
+  FaDollarSign,
+  FaTools, 
+  FaCarBattery,
+  FaChartLine,
+  FaArrowUp,
+  FaArrowDown,
+  FaEye,
+  FaEyeSlash
+} from 'react-icons/fa';
 import { GiCarWheel } from 'react-icons/gi';
 import './DashboardPage.css';
 
 function DashboardPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mostrarValor, setMostrarValor] = useState(false); // Estado para toggle
   const [estatisticas, setEstatisticas] = useState({
     totalProdutos: 0,
     estoqueBaixo: 0,
@@ -58,76 +69,227 @@ function DashboardPage() {
     });
   };
 
-  const produtosEstoqueBaixo = produtos.filter(p => p.estoqueAtual <= p.estoqueMinimo);
+  const toggleMostrarValor = () => {
+    setMostrarValor(!mostrarValor);
+  };
 
-  if (loading) return <div className="loading">Carregando dados...</div>;
+  const produtosEstoqueBaixo = produtos
+    .filter(p => p.estoqueAtual <= p.estoqueMinimo)
+    .sort((a, b) => (a.estoqueAtual / a.estoqueMinimo) - (b.estoqueAtual / b.estoqueMinimo))
+    .slice(0, 5);
+
+  const produtosMaisCaros = produtos
+    .sort((a, b) => (b.precoVenda * b.estoqueAtual) - (a.precoVenda * a.estoqueAtual))
+    .slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Carregando informações...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
-      <h2>Dashboard</h2>
-
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon"></div>
-          <div className="stat-content">
-            <h3>Total de Produtos</h3>
-            <p className="stat-value">{estatisticas.totalProdutos}</p>
+      {/* Métricas Principais */}
+      <div className="kpi-section">
+        <div className="kpi-card primary">
+          <div className="kpi-icon-wrapper">
+            <FaBoxes className="kpi-icon" />
+          </div>
+          <div className="kpi-content">
+            <span className="kpi-label">Total de Produtos</span>
+            <div className="kpi-value-row">
+              <span className="kpi-value">{estatisticas.totalProdutos}</span>
+              <span className="kpi-badge success">
+                <FaArrowUp size={10} /> Ativo
+              </span>
+            </div>
+            <span className="kpi-subtitle">Itens em estoque</span>
           </div>
         </div>
 
-        <div className="stat-card warning">
-          <div className="stat-icon"></div>
-          <div className="stat-content">
-            <h3>Estoque Baixo</h3>
-            <p className="stat-value">{estatisticas.estoqueBaixo}</p>
+        <div className="kpi-card warning">
+          <div className="kpi-icon-wrapper">
+            <FaExclamationTriangle className="kpi-icon" />
           </div>
-        </div>
-
-        <div className="stat-card success">
-          <div className="stat-icon"></div>
-          <div className="stat-content">
-            <h3>Valor Total Estoque</h3>
-            <p className="stat-value">{formatarMoeda(estatisticas.valorTotalEstoque)}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="categories-section">
-        <h3>Produtos por Categoria</h3>
-        <div className="categories-grid">
-          <div className="category-card autopeca">
-            <FaTools className="category-icon" size={32} color="#e67e22" />
-            <span className="category-name">Autopeças</span>
-            <span className="category-count">{estatisticas.categorias.autopecas}</span>
-          </div>
-          <div className="category-card bateria">
-            <FaCarBattery className="category-icon" size={32} color="#27ae60" />
-            <span className="category-name">Baterias</span>
-            <span className="category-count">{estatisticas.categorias.baterias}</span>
-          </div>
-          <div className="category-card pneu">
-            <GiCarWheel className="category-icon" size={32} color="#2c3e50" />
-            <span className="category-name">Pneus</span>
-            <span className="category-count">{estatisticas.categorias.pneus}</span>
-          </div>
-        </div>
-      </div>
-
-      {produtosEstoqueBaixo.length > 0 && (
-        <div className="alerts-section">
-          <h3>Alertas de Estoque Baixo</h3>
-          <div className="alerts-list">
-            {produtosEstoqueBaixo.map(produto => (
-              <div key={produto.id} className="alert-item">
-                <span className="alert-produto">{produto.nome}</span>
-                <span className="alert-estoque">
-                  Estoque: {produto.estoqueAtual} / Mínimo: {produto.estoqueMinimo}
+          <div className="kpi-content">
+            <span className="kpi-label">Alertas Críticos</span>
+            <div className="kpi-value-row">
+              <span className="kpi-value">{estatisticas.estoqueBaixo}</span>
+              {estatisticas.estoqueBaixo > 0 && (
+                <span className="kpi-badge danger">
+                  <FaArrowDown size={10} /> Urgente
                 </span>
-              </div>
-            ))}
+              )}
+            </div>
+            <span className="kpi-subtitle">Produtos abaixo do mínimo</span>
           </div>
         </div>
-      )}
+
+        <div className="kpi-card success">
+          <div className="kpi-icon-wrapper">
+            <FaDollarSign className="kpi-icon" />
+          </div>
+          <div className="kpi-content">
+            <div className="kpi-header-with-toggle">
+              <span className="kpi-label">Valor em Estoque</span>
+              <button 
+                className="toggle-visibility-btn"
+                onClick={toggleMostrarValor}
+                title={mostrarValor ? "Ocultar valor" : "Mostrar valor"}
+                aria-label={mostrarValor ? "Ocultar valor" : "Mostrar valor"}
+              >
+                {mostrarValor ? <FaEye size={12} /> : <FaEyeSlash size={12} />}
+              </button>
+            </div>
+            <div className="kpi-value-row">
+              <span className="kpi-value">
+                {mostrarValor ? formatarMoeda(estatisticas.valorTotalEstoque) : '•••••'}
+              </span>
+            </div>
+            <span className="kpi-subtitle">Capital investido</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Layout em Duas Colunas */}
+      <div className="dashboard-grid">
+        {/* Coluna Esquerda */}
+        <div className="dashboard-col">
+          <div className="card">
+            <div className="card-header">
+              <h3>
+                <FaChartLine /> Distribuição por Categoria
+              </h3>
+            </div>
+            <div className="categories-list">
+              <div className="category-item autopeca">
+                <div className="category-info">
+                  <FaTools className="category-icon" size={24} />
+                  <div>
+                    <span className="category-name">Autopeças</span>
+                    <span className="category-desc">Peças gerais</span>
+                  </div>
+                </div>
+                <span className="category-count">{estatisticas.categorias.autopecas}</span>
+              </div>
+
+              <div className="category-item bateria">
+                <div className="category-info">
+                  <FaCarBattery className="category-icon" size={24} />
+                  <div>
+                    <span className="category-name">Baterias</span>
+                    <span className="category-desc">Novas e usadas</span>
+                  </div>
+                </div>
+                <span className="category-count">{estatisticas.categorias.baterias}</span>
+              </div>
+
+              <div className="category-item pneu">
+                <div className="category-info">
+                  <GiCarWheel className="category-icon" size={24} />
+                  <div>
+                    <span className="category-name">Pneus</span>
+                    <span className="category-desc">Todos os tipos</span>
+                  </div>
+                </div>
+                <span className="category-count">{estatisticas.categorias.pneus}</span>
+              </div>
+            </div>
+          </div>
+
+          {produtosMaisCaros.length > 0 && (
+            <div className="card">
+              <div className="card-header">
+                <h3>
+                  <FaDollarSign /> Maior Valor em Estoque
+                </h3>
+                <span className="card-subtitle">Top 3 produtos</span>
+              </div>
+              <div className="valuable-products">
+                {produtosMaisCaros.map((produto, index) => (
+                  <div key={produto.id} className="valuable-item">
+                    <div className="valuable-rank">#{index + 1}</div>
+                    <div className="valuable-info">
+                      <span className="valuable-name">{produto.nome}</span>
+                      <span className="valuable-quantity">{produto.estoqueAtual} unidades</span>
+                    </div>
+                    <span className="valuable-value">
+                      {mostrarValor 
+                        ? formatarMoeda(produto.precoVenda * produto.estoqueAtual)
+                        : '••••••'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Coluna Direita - Alertas */}
+        <div className="dashboard-col">
+          <div className="card alert-card">
+            <div className="card-header">
+              <h3>
+                <FaExclamationTriangle /> Ação Necessária
+              </h3>
+              <span className="card-subtitle">
+                {produtosEstoqueBaixo.length === 0 
+                  ? 'Todos os produtos em níveis adequados' 
+                  : `${produtosEstoqueBaixo.length} produto(s) precisam de atenção`}
+              </span>
+            </div>
+            
+            {produtosEstoqueBaixo.length > 0 ? (
+              <div className="alerts-container">
+                {produtosEstoqueBaixo.map(produto => {
+                  const percentual = (produto.estoqueAtual / produto.estoqueMinimo) * 100;
+                  const nivel = percentual === 0 ? 'critico' : percentual < 50 ? 'urgente' : 'baixo';
+                  
+                  return (
+                    <div key={produto.id} className={`alert-item ${nivel}`}>
+                      <div className="alert-header">
+                        <span className="alert-name">{produto.nome}</span>
+                        <span className={`alert-badge ${nivel}`}>
+                          {nivel === 'critico' ? 'CRÍTICO' : nivel === 'urgente' ? 'URGENTE' : 'BAIXO'}
+                        </span>
+                      </div>
+                      <div className="alert-details">
+                        <div className="stock-info">
+                          <span className="stock-current">
+                            Atual: <strong>{produto.estoqueAtual}</strong>
+                          </span>
+                          <span className="stock-divider">•</span>
+                          <span className="stock-min">
+                            Mínimo: <strong>{produto.estoqueMinimo}</strong>
+                          </span>
+                        </div>
+                        <div className="progress-bar">
+                          <div 
+                            className={`progress-fill ${nivel}`}
+                            style={{ width: `${Math.min(percentual, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="alert-action">
+                        <button className="btn-reorder">Solicitar Reposição</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="no-alerts">
+                <div className="success-icon">✓</div>
+                <p>Parabéns! Todos os produtos estão com estoque adequado.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

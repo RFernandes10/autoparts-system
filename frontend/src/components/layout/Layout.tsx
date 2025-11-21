@@ -7,8 +7,6 @@ import {
   FaShoppingCart,
   FaChartBar,
   FaCog,
-  FaBell,
-  FaSignOutAlt,
 } from "react-icons/fa";
 import "./Layout.css";
 
@@ -16,7 +14,7 @@ function Layout() {
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: <FaTachometerAlt /> },
+    { path: "/", label: "Painel de Controle", icon: <FaTachometerAlt /> },
     { path: "/produtos", label: "Produtos", icon: <FaBoxes /> },
     { path: "/clientes", label: "Clientes", icon: <FaUsers /> },
     { path: "/fornecedores", label: "Fornecedores", icon: <FaTruck /> },
@@ -26,7 +24,6 @@ function Layout() {
 
   return (
     <div className="layout">
-      {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="brand">
@@ -58,57 +55,32 @@ function Layout() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <div className="main-wrapper">
-        {/* Top Bar */}
         <header className="topbar">
           <div className="topbar-content">
-            <div className="topbar-title">
-              <h1>
-                {navItems.find((item) => item.path === location.pathname)
-                  ?.label || "Dashboard"}
-              </h1>
-              <span className="breadcrumb">
-                Sistema de Gestão /{" "}
-                {navItems.find((item) => item.path === location.pathname)
-                  ?.label || "Painel"}
-              </span>
-            </div>
+            <h1 className="topbar-title">
+              {navItems.find((item) => item.path === location.pathname)
+                ?.label || "Painel de Controle"}
+            </h1>
 
-            <div className="topbar-actions">
-              <button className="topbar-btn">
-                <FaBell />
-                <span className="badge">3</span>
-              </button>
-
-              <div className="user-menu">
-                <div className="user-info">
-                  <span className="user-name">Roberto Fernandes</span>
-                  <span className="user-role">Administrador</span>
-                </div>
-                <div className="user-avatar">RF</div>
+            <div className="user-menu">
+              <div className="user-info">
+                <span className="user-name">Sistema de Gestão</span>
+                <span className="user-role">Administrador</span>
               </div>
-
-              <button className="topbar-btn logout">
-                <FaSignOutAlt />
-              </button>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="content">
           <Outlet />
         </main>
 
-        {/* Footer */}
         <footer className="footer">
-          <div className="footer-content">
-            <span>
-              © 2025 AutoParts System. Desenvolvido por Roberto Fernandes
-            </span>
-            <span className="footer-version">v1.0.0</span>
-          </div>
+          <span>
+            © 2025 AutoParts System. Desenvolvido por Roberto Fernandes Engenheiro de Software & Programador FullStack 😎
+          </span>
+          <span className="footer-version">v1.0.0</span>
         </footer>
       </div>
     </div>
