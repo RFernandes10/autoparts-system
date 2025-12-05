@@ -1,0 +1,102 @@
+/* frontend/src/components/produtos/ProdutoListItem.css */
+
+.produto-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 8px;
+}
+
+.produto-list-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary);
+}
+
+.item-main-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-codigo {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.item-nome {
+    font-weight: 600;
+    color: var(--color-text-strong);
+}
+
+.item-details {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex: 1;
+    justify-content: flex-end;
+    color: var(--color-text);
+}
+
+.item-estoque {
+    font-weight: 500;
+    min-width: 80px;
+    text-align: right;
+}
+
+.item-estoque.low {
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+.item-preco {
+    font-weight: 600;
+    min-width: 120px;
+    text-align: right;
+    color: var(--color-success);
+}
+
+.item-categoria {
+    background-color: var(--color-bg-muted);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    min-width: 100px;
+    text-align: center;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 24px;
+}
+
+.btn-action-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-action-icon:hover {
+    color: var(--color-primary);
+    background-color: var(--color-bg-muted);
+}
+
+.btn-action-icon.btn-delete:hover {
+    color: var(--color-danger);
+}

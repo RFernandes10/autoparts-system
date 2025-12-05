@@ -1,16 +1,22 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { produtoService } from "../services/produtoService";
 import type { Produto } from "../types";
 import type { ProdutoFormData } from "../schemas/produto.schema";
 
 import ProdutoForm from "../components/produtos/ProdutoForm";
 import { ProdutoCard } from "../components/produtos/ProdutoCard";
+import { ProdutoListItem } from "../components/produtos/ProdutoListItem";
 import { ProdutoFilterBar } from "../components/produtos/ProdutoFilterBar";
 import { PageHeader } from "../components/common/PageHeader";
+import { ProdutoCardSkeleton } from "../components/produtos/ProdutoCardSkeleton";
+import { ProdutoListItemSkeleton } from "../components/produtos/ProdutoListItemSkeleton";
 import { FaSearch } from "react-icons/fa";
 
 import "./ProdutosPage.css";
+import "../components/produtos/ProdutoListItem.css";
+
 
 function ProdutosPage() {
   const queryClient = useQueryClient();
@@ -18,46 +24,65 @@ function ProdutosPage() {
   const [filtroCategoria, setFiltroCategoria] = useState("TODOS");
   const [busca, setBusca] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [produtoEditando, setProdutoEditando] = useState<Produto | undefined>(undefined);
+  const [produtoEditando, setProdutoEditando] = useState<Produto | undefined>(
+    undefined
+  );
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const { data: produtos = [], isLoading, isError, error } = useQuery<Produto[], Error>({
+  const {
+    data: produtos = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Produto[], Error>({
     queryKey: ["produtos"],
-    queryFn: produtoService.listarTodos
+    queryFn: produtoService.listarTodos,
   });
 
   const createMutation = useMutation({
     mutationFn: (data: ProdutoFormData) =>
       produtoService.criar(data as unknown as Partial<Produto>),
     onSuccess: () => {
-      alert("Produto cadastrado com sucesso.");
+      toast.success("Produto cadastrado com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },
     onError: (err: any) => {
-      alert("Erro ao salvar produto. " + (err.response?.data?.message || err.message));
-    }
+      toast.error(
+        "Erro ao salvar produto. " + (err.response?.data?.message || err.message)
+      );
+    },
   });
 
   const updateMutation = useMutation({
     mutationFn: (vars: { id: number; data: ProdutoFormData }) =>
-      produtoService.atualizar(vars.id, vars.data as unknown as Partial<Produto>),
+      produtoService.atualizar(
+        vars.id,
+        vars.data as unknown as Partial<Produto>
+      ),
     onSuccess: () => {
-      alert("Produto atualizado com sucesso.");
+      toast.success("Produto atualizado com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },
     onError: (err: any) => {
-      alert("Erro ao atualizar produto. " + (err.response?.data?.message || err.message));
-    }
+      toast.error(
+        "Erro ao atualizar produto. " +
+          (err.response?.data?.message || err.message)
+      );
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => produtoService.deletar(id),
     onSuccess: () => {
-      alert("Produto excluído com sucesso.");
+      toast.success("Produto excluído com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },
     onError: (err: any) => {
-      alert("Erro ao excluir produto. " + (err.response?.data?.message || err.message));
-    }
+      toast.error(
+        "Erro ao excluir produto. " +
+          (err.response?.data?.message || err.message)
+      );
+    },
   });
 
   const handleNovoProduto = () => {
@@ -81,7 +106,9 @@ function ProdutosPage() {
   };
 
   const handleDeletarProduto = async (produto: Produto) => {
-    if (window.confirm(`Tem certeza que deseja excluir o produto "${produto.nome}"?`)) {
+    if (
+      window.confirm(`Tem certeza que deseja excluir o produto "${produto.nome}"?`)
+    ) {
       await deleteMutation.mutateAsync(produto.id);
     }
   };
@@ -94,10 +121,10 @@ function ProdutosPage() {
   const produtosFiltrados = useMemo(() => {
     return produtos
       .filter(
-        p => filtroCategoria === "TODOS" || p.categoria === filtroCategoria
+        (p) => filtroCategoria === "TODOS" || p.categoria === filtroCategoria
       )
       .filter(
-        p =>
+        (p) =>
           busca === "" ||
           p.nome.toLowerCase().includes(busca.toLowerCase()) ||
           p.codigoProduto.toLowerCase().includes(busca.toLowerCase())
@@ -105,16 +132,39 @@ function ProdutosPage() {
   }, [produtos, filtroCategoria, busca]);
 
   if (isLoading) {
+    const skeletonCount = viewMode === 'grid' ? 6 : 8;
+    const SkeletonComponent = viewMode === 'grid' ? ProdutoCardSkeleton : ProdutoListItemSkeleton;
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Carregando produtos...</p>
+      <div className="produtos-page">
+        <PageHeader
+          title="Produtos"
+          subtitle="Carregando..."
+          buttonText="Novo Produto"
+          onButtonClick={() => {}}
+          buttonDisabled={true}
+        />
+        <ProdutoFilterBar
+            busca=""
+            onBuscaChange={() => {}}
+            filtroCategoria="TODOS"
+            onFiltroCategoriaChange={() => {}}
+            produtos={[]}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+        />
+        <div className={viewMode === 'grid' ? 'produtos-grid' : 'produtos-list'}>
+          {Array.from({ length: skeletonCount }).map((_, index) => (
+            <SkeletonComponent key={index} />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (isError) {
-    return <div className="error">Erro ao carregar produtos. {error?.message}</div>;
+    return (
+      <div className="error">Erro ao carregar produtos. {error?.message}</div>
+    );
   }
 
   return (
@@ -132,6 +182,8 @@ function ProdutosPage() {
         filtroCategoria={filtroCategoria}
         onFiltroCategoriaChange={setFiltroCategoria}
         produtos={produtos}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       {produtosFiltrados.length === 0 ? (
@@ -141,15 +193,24 @@ function ProdutosPage() {
           <p>Tente ajustar os filtros ou adicionar um novo produto.</p>
         </div>
       ) : (
-        <div className="produtos-grid">
-          {produtosFiltrados.map(produto => (
-            <ProdutoCard
-              key={produto.id}
-              produto={produto}
-              onEdit={handleEditarProduto}
-              onDelete={handleDeletarProduto}
-            />
-          ))}
+        <div className={viewMode === 'grid' ? 'produtos-grid' : 'produtos-list'}>
+          {produtosFiltrados.map((produto) =>
+            viewMode === 'grid' ? (
+              <ProdutoCard
+                key={produto.id}
+                produto={produto}
+                onEdit={handleEditarProduto}
+                onDelete={handleDeletarProduto}
+              />
+            ) : (
+              <ProdutoListItem
+                key={produto.id}
+                produto={produto}
+                onEdit={handleEditarProduto}
+                onDelete={handleDeletarProduto}
+              />
+            )
+          )}
         </div>
       )}
 
@@ -165,3 +226,4 @@ function ProdutosPage() {
 }
 
 export default ProdutosPage;
+

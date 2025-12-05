@@ -1,33 +1,7 @@
 import { FaChartLine, FaInbox } from "react-icons/fa";
-import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import { useTheme } from "../../contexts/ThemeContext";
-
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-  if (percent === 0) return null; // Don't show label for 0% slices
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize="16px">
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
-  );
-};
-
-const CustomLegend = ({ payload, theme }) => {
-  return (
-    <ul className="flex flex-col gap-1 mt-4">
-      {payload.map((entry, index) => (
-        <li key={`item-${index}`} className="flex items-center gap-2 text-sm" style={{ color: theme === 'dark' ? '#fff' : '#000' }}>
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></div>
-          {entry.value} ({entry.payload.value})
-        </li>
-      ))}
-    </ul>
-  );
-};
+import { renderCustomizedLabel, CustomLegend, CustomTooltip } from "./Charts";
 
 export const CategoryDistribution = ({ categorias }: { categorias: { autopecas: number, baterias: number, pneus: number } }) => {
   const { theme } = useTheme();
@@ -39,7 +13,9 @@ export const CategoryDistribution = ({ categorias }: { categorias: { autopecas: 
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
-  const COLORS = ['#FF8042', '#00C49F', '#0088FE'];
+  const COLORS = theme === 'dark'
+    ? ['#FF8042', '#00C49F', '#0088FE']
+    : ['#FF9F40', '#00D1A1', '#3A99FF'];
 
   return (
     <div className="card dark:bg-slate-900">
@@ -57,7 +33,7 @@ export const CategoryDistribution = ({ categorias }: { categorias: { autopecas: 
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
-                outerRadius={90} // Adjusted radius
+                outerRadius={90}
                 fill="#8884d8"
                 paddingAngle={5}
                 dataKey="value"
@@ -68,8 +44,8 @@ export const CategoryDistribution = ({ categorias }: { categorias: { autopecas: 
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              {/* Tooltip removed */}
-              <Legend content={<CustomLegend theme={theme} />} />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend content={<CustomLegend />} />
             </PieChart>
           </ResponsiveContainer>
         ) : (

@@ -9,6 +9,8 @@ import {
   FaDollarSign,
 } from "react-icons/fa";
 import { GiCarWheel } from "react-icons/gi";
+import './ProdutoCard.css';
+import { formatarMoeda } from "../../utils/formatters"; // Import the utility function
 
 interface ProdutoCardProps {
     produto: Produto;

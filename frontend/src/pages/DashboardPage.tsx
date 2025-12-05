@@ -89,30 +89,38 @@ function DashboardPage() {
     )
     .slice(0, 3);
 
+import {
+  MetricsSkeleton,
+  ChartSkeleton,
+  ProductListSkeleton,
+} from "../components/dashboard/DashboardSkeletons";
+
+// ... (rest of the imports)
+
+// ... (inside DashboardPage component)
+
   if (loading) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-3">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500"></div>
-        <p className="text-sm font-medium text-slate-500">
-          Carregando informações...
-        </p>
+      <div className="flex h-full flex-col gap-6">
+        <MetricsSkeleton />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <ProductListSkeleton count={3} />
+          <ChartSkeleton />
+          <ProductListSkeleton count={5} />
+        </div>
       </div>
     );
   }
 
   return (
+// ... (rest of the component)
     <div className="flex h-full flex-col gap-6 overflow-y-auto">
       <DashboardMetrics estatisticas={estatisticas} mostrarValor={mostrarValor} toggleMostrarValor={toggleMostrarValor} />
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-6">
-          <CategoryDistribution categorias={estatisticas.categorias} />
-          <TopProducts produtosMaisCaros={produtosMaisCaros} mostrarValor={mostrarValor} />
-        </div>
-
-        <div className="flex flex-col gap-6">
-          <LowStockAlerts produtosEstoqueBaixo={produtosEstoqueBaixo} />
-        </div>
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+        <TopProducts produtosMaisCaros={produtosMaisCaros} mostrarValor={mostrarValor} />
+        <CategoryDistribution categorias={estatisticas.categorias} />
+        <LowStockAlerts produtosEstoqueBaixo={produtosEstoqueBaixo} />
       </div>
     </div>
   );
