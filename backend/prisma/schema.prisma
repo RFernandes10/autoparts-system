@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Usuario {
+  id            Int                   @id @default(autoincrement())
+  nome          String
+  email         String                @unique
+  senha         String
+  tipo          TipoUsuario
+  dataCriacao   DateTime              @default(now())
+  vendas        Venda[]
+  movimentacoes MovimentacaoEstoque[]
+
+  @@map("usuarios")
+}
+
+model Fornecedor {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  cnpj        String    @unique
+  telefone    String
+  email       String?
+  endereco    String?
+  dataCriacao DateTime  @default(now())
+  produtos    Produto[]
+
+  @@map("fornecedores")
+}
+
+model Cliente {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  cpfCnpj     String   @unique
+  telefone    String
+  email       String?
+  endereco    String?
+  dataCriacao DateTime @default(now())
+  vendas      Venda[]
+
+  @@map("clientes")
+}
+
+model Produto {
+  id                      Int                      @id @default(autoincrement())
+  codigoProduto           String                   @unique
+  nome                    String
+  descricao               String?
+  categoria               CategoriaProduto
+  tipoProduto             TipoProduto
+  precoCompra             Decimal                  @db.Decimal(10, 2)
+  precoVenda              Decimal                  @db.Decimal(10, 2)
+  estoqueAtual            Int
+  estoqueMinimo           Int
+  fornecedorId            Int?
+  imagemUrl               String?
+  dataCriacao             DateTime                 @default(now())
+  dataAtualizacao         DateTime                 @updatedAt
+  fornecedor              Fornecedor?              @relation(fields: [fornecedorId], references: [id])
+  compatibilidadeVeiculos CompatibilidadeVeiculo[]
+  especificacoesBateria   EspecificacaoBateria[]
+  especificacoesPneu      EspecificacaoPneu[]
+  itensVenda              ItemVenda[]
+  movimentacoesEstoque    MovimentacaoEstoque[]
+
+  @@map("produtos")
+}
+
+model CompatibilidadeVeiculo {
+  id            Int     @id @default(autoincrement())
+  produtoId     Int
+  marcaVeiculo  String
+  modeloVeiculo String
+  anoInicio     Int
+  anoFim        Int?
+  motor         String?
+  observacoes   String?
+  produto       Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("compatibilidade_veiculos")
+}
+
+model EspecificacaoBateria {
+  id            Int           @id @default(autoincrement())
+  produtoId     Int           @unique
+  amperagem     String
+  voltagem      String
+  tipoBateria   String
+  marca         String
+  garantiaMeses Int?
+  estado        EstadoBateria
+  produto       Produto       @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("especificacoes_bateria")
+}
+
+model EspecificacaoPneu {
+  id               Int      @id @default(autoincrement())
+  produtoId        Int      @unique
+  medida           String
+  marca            String
+  tipoPneu         TipoPneu
+  dot              String?
+  indiceCarga      String?
+  indiceVelocidade String?
+  produto          Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("especificacoes_pneu")
+}
+
+model Servico {
+  id            Int                @id @default(autoincrement())
+  nomeServico   String
+  descricao     String?
+  preco         Decimal            @db.Decimal(10, 2)
+  tempoEstimado String?
+  ativo         Boolean            @default(true)
+  itensServico  ItemServicoVenda[]
+
+  @@map("servicos")
+}
+
+model Venda {
+  id             Int        @id @default(autoincrement())
+  clienteId      Int
+  usuarioId      Int
+  valorTotal     Decimal    @db.Decimal(10, 2)
+  dataVenda      DateTime   @default(now())
+  formaPagamento String
+  cliente        Cliente    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  usuario        Usuario    @relation(fields: [usuarioId], references: [id])
+  itensVenda     ItemVenda[]
+  itensServico   ItemServicoVenda[]
+
+  @@map("vendas")
+}
+
+
+model ItemVenda {
+  id            Int      @id @default(autoincrement())
+  vendaId       Int
+  produtoId     Int
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+  subtotal      Decimal @db.Decimal(10, 2)
+
+  venda   Venda   @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("itens_venda")
+}
+
+
+
+model ItemServicoVenda {
+  id            Int     @id @default(autoincrement())
+  vendaId       Int
+  servicoId     Int
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+  subtotal      Decimal @db.Decimal(10, 2)
+  venda         Venda   @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  servico       Servico @relation(fields: [servicoId], references: [id])
+
+  @@map("itens_servico_venda")
+}
+
+model MovimentacaoEstoque {
+  id               Int              @id @default(autoincrement())
+  produtoId        Int
+  tipo             TipoMovimentacao
+  quantidade       Int
+  motivo           String
+  usuarioId        Int
+  dataMovimentacao DateTime         @default(now())
+  produto          Produto          @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  usuario          Usuario          @relation(fields: [usuarioId], references: [id])
+
+  @@map("movimentacoes_estoque")
+}
+
+enum TipoUsuario {
+  ADMIN
+  VENDEDOR
+}
+
+enum CategoriaProduto {
+  AUTOPECA
+  BATERIA
+  PNEU
+}
+
+enum TipoProduto {
+  NOVO
+  USADO
+  SEMINOVO
+  REMOLDADO
+}
+
+enum EstadoBateria {
+  NOVA
+  USADA
+}
+
+enum TipoPneu {
+  NOVO
+  USADO
+  REMOLDADO
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+}

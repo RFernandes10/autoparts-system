@@ -1,0 +1,167 @@
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { produtoService } from "../services/produtoService";
+import type { Produto } from "../types";
+import type { ProdutoFormData } from "../schemas/produto.schema";
+
+import ProdutoForm from "../components/produtos/ProdutoForm";
+import { ProdutoCard } from "../components/produtos/ProdutoCard";
+import { ProdutoFilterBar } from "../components/produtos/ProdutoFilterBar";
+import { PageHeader } from "../components/common/PageHeader";
+import { FaSearch } from "react-icons/fa";
+
+import "./ProdutosPage.css";
+
+function ProdutosPage() {
+  const queryClient = useQueryClient();
+
+  const [filtroCategoria, setFiltroCategoria] = useState("TODOS");
+  const [busca, setBusca] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [produtoEditando, setProdutoEditando] = useState<Produto | undefined>(undefined);
+
+  const { data: produtos = [], isLoading, isError, error } = useQuery<Produto[], Error>({
+    queryKey: ["produtos"],
+    queryFn: produtoService.listarTodos
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: ProdutoFormData) =>
+      produtoService.criar(data as unknown as Partial<Produto>),
+    onSuccess: () => {
+      alert("Produto cadastrado com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ["produtos"] });
+    },
+    onError: (err: any) => {
+      alert("Erro ao salvar produto. " + (err.response?.data?.message || err.message));
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (vars: { id: number; data: ProdutoFormData }) =>
+      produtoService.atualizar(vars.id, vars.data as unknown as Partial<Produto>),
+    onSuccess: () => {
+      alert("Produto atualizado com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ["produtos"] });
+    },
+    onError: (err: any) => {
+      alert("Erro ao atualizar produto. " + (err.response?.data?.message || err.message));
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => produtoService.deletar(id),
+    onSuccess: () => {
+      alert("Produto excluído com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ["produtos"] });
+    },
+    onError: (err: any) => {
+      alert("Erro ao excluir produto. " + (err.response?.data?.message || err.message));
+    }
+  });
+
+  const handleNovoProduto = () => {
+    setProdutoEditando(undefined);
+    setShowForm(true);
+  };
+
+  const handleEditarProduto = (produto: Produto) => {
+    setProdutoEditando(produto);
+    setShowForm(true);
+  };
+
+  const handleSalvarProduto = async (data: ProdutoFormData) => {
+    if (produtoEditando) {
+      await updateMutation.mutateAsync({ id: produtoEditando.id, data });
+    } else {
+      await createMutation.mutateAsync(data);
+    }
+    setShowForm(false);
+    setProdutoEditando(undefined);
+  };
+
+  const handleDeletarProduto = async (produto: Produto) => {
+    if (window.confirm(`Tem certeza que deseja excluir o produto "${produto.nome}"?`)) {
+      await deleteMutation.mutateAsync(produto.id);
+    }
+  };
+
+  const handleCancelarForm = () => {
+    setShowForm(false);
+    setProdutoEditando(undefined);
+  };
+
+  const produtosFiltrados = useMemo(() => {
+    return produtos
+      .filter(
+        p => filtroCategoria === "TODOS" || p.categoria === filtroCategoria
+      )
+      .filter(
+        p =>
+          busca === "" ||
+          p.nome.toLowerCase().includes(busca.toLowerCase()) ||
+          p.codigoProduto.toLowerCase().includes(busca.toLowerCase())
+      );
+  }, [produtos, filtroCategoria, busca]);
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Carregando produtos...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div className="error">Erro ao carregar produtos. {error?.message}</div>;
+  }
+
+  return (
+    <div className="produtos-page">
+      <PageHeader
+        title="Produtos"
+        subtitle={`${produtos.length} produtos cadastrados`}
+        buttonText="Novo Produto"
+        onButtonClick={handleNovoProduto}
+      />
+
+      <ProdutoFilterBar
+        busca={busca}
+        onBuscaChange={setBusca}
+        filtroCategoria={filtroCategoria}
+        onFiltroCategoriaChange={setFiltroCategoria}
+        produtos={produtos}
+      />
+
+      {produtosFiltrados.length === 0 ? (
+        <div className="empty-state">
+          <FaSearch size={48} />
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente ajustar os filtros ou adicionar um novo produto.</p>
+        </div>
+      ) : (
+        <div className="produtos-grid">
+          {produtosFiltrados.map(produto => (
+            <ProdutoCard
+              key={produto.id}
+              produto={produto}
+              onEdit={handleEditarProduto}
+              onDelete={handleDeletarProduto}
+            />
+          ))}
+        </div>
+      )}
+
+      {showForm && (
+        <ProdutoForm
+          produto={produtoEditando}
+          onSave={handleSalvarProduto}
+          onCancel={handleCancelarForm}
+        />
+      )}
+    </div>
+  );
+}
+
+export default ProdutosPage;
