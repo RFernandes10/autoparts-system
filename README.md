@@ -2,11 +2,12 @@
 
 Tela do painel de controle (dashboard):
 
-![Dashboard](frontend/public/Screenshot_2.jpg)
+![Dashboard](frontend/public/Screenshot_2.png)
 
 Tela de listagem de produtos com cards responsivos:
 
-![Tela de Produtos](frontend/public/Screenshot_1.jpg)
+![Tela de Produtos](frontend/public/Screenshot_1.png)
+
 
 
 # 🚗 AutoParts System
