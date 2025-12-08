@@ -1,3 +1,14 @@
+## 🖼️ Prévia da interface
+
+Tela do painel de controle (dashboard):
+
+![Dashboard](frontend/public/Screenshot_2.jpg)
+
+Tela de listagem de produtos com cards responsivos:
+
+![Tela de Produtos](frontend/public/Screenshot_1.jpg)
+
+
 # 🚗 AutoParts System
 
 Sistema completo de gestão para lojas de autopeças, com foco em controle de estoque, organização de produtos e visão gerencial do negócio.
