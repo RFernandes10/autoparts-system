@@ -87,3 +87,5 @@ export const KpiCard = ({
     </div>
   );
 };
+
+export default KpiCard;

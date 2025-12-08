@@ -1,6 +1,5 @@
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import './ProdutoCard.css'; // Reusing the same CSS for layout
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export const ProdutoCardSkeleton = () => {
   return (

@@ -1,5 +1,59 @@
 @import "tailwindcss";
 
+
+:root {
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 70px;
+  --topbar-height: 70px;
+
+  /* Colors (Light Theme) */
+  --primary: #4f46e5; /* Indigo 600 */
+  --primary-dark: #4338ca; /* Indigo 700 */
+  --secondary: #14b8a6; /* Teal 500 */
+  --danger: #ef4444; /* Red 500 */
+
+  --bg-dark: #f4f4f5; /* Zinc 100 */
+  --bg-medium: #e4e4e7; /* Zinc 200 */
+  --bg-light: #ffffff; /* White */
+  --border: #d4d4d8; /* Zinc 300 */
+
+  --text-light: #18181b; /* Zinc 900 */
+  --text-muted: #71717a; /* Zinc 500 */
+  --text-dark: #18181b; /* Zinc 900 */
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+
+  /* Effects */
+  --radius: 10px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+  --transition: all 0.2s ease;
+}
+
+html.dark {
+  /* Colors (Dark Theme) */
+  --primary: #6366f1; /* Indigo 500 */
+  --primary-dark: #818cf8; /* Indigo 400 */
+  --secondary: #2dd4bf; /* Teal 400 */
+
+  --bg-dark: #18181b; /* Zinc 900 */
+  --bg-medium: #27272a; /* Zinc 800 */
+  --bg-light: #1f1f22; /* Custom slightly lighter Zinc */
+  --border: #3f3f46; /* Zinc 700 */
+
+  --text-light: #f4f4f5; /* Zinc 100 */
+  --text-muted: #a1a1aa; /* Zinc 400 */
+  --text-dark: #f4f4f5; /* Zinc 100 */
+}
+
 @layer base {
   body {
     -webkit-font-smoothing: antialiased;
@@ -44,3 +98,6 @@
 .card {
   @apply bg-white dark:bg-slate-900 rounded-xl shadow p-6;
 }
+
+
+
