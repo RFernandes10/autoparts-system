@@ -1,4 +1,4 @@
-## 🖼️ Prévia da interface
+## Prévia da interface
 
 Tela do painel de controle (dashboard):
 
@@ -10,11 +10,11 @@ Tela de listagem de produtos com cards responsivos:
 
 
 
-# 🚗 AutoParts System
+# AutoParts System
 
 Sistema completo de gestão para lojas de autopeças, com foco em controle de estoque, organização de produtos e visão gerencial do negócio.
 
-## 📌 Status do projeto
+## Status do projeto
 
 - ✅ Módulo de produtos com layout premium e responsivo
 - ✅ Gestão de clientes e fornecedores
@@ -26,7 +26,7 @@ Sistema completo de gestão para lojas de autopeças, com foco em controle de es
 
 ---
 
-## 📋 Funcionalidades principais
+## Funcionalidades principais
 
 - **Gestão de Produtos**
 
@@ -52,7 +52,7 @@ Sistema completo de gestão para lojas de autopeças, com foco em controle de es
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 ### Backend
 
@@ -72,7 +72,7 @@ Sistema completo de gestão para lojas de autopeças, com foco em controle de es
 
 ---
 
-## 🚀 Como executar o projeto
+## Como executar o projeto
 
 ### Pré-requisitos
 
@@ -109,7 +109,7 @@ O frontend ficará em: `http://localhost:5173`.
 
 ---
 
-## 📦 Estrutura do projeto
+## Estrutura do projeto
 
 autoparts-system/
 ├── backend/ # API REST
@@ -133,7 +133,7 @@ autoparts-system/
 
 ---
 
-## 🗄️ Modelo de dados (principal)
+## Modelo de dados (principal)
 
 - `produtos` – catálogo de produtos
 - `clientes` – cadastro de clientes
@@ -144,7 +144,7 @@ autoparts-system/
 
 ---
 
-## 👨‍💻 Desenvolvedor
+## Desenvolvedor
 
 **Roberto Fernandes**
 
@@ -152,8 +152,8 @@ autoparts-system/
 
 ---
 
-## 📝 Licença
+## Licença
 
 Este projeto está sob a licença MIT. Sinta‑se à vontade para estudar, melhorar e adaptar para o seu uso.
 
-> ⭐ Projeto focado em aprendizado com boas práticas de front-end, back-end e versionamento (commits semânticos).
+> Projeto focado em aprendizado com boas práticas de front-end, back-end e versionamento (commits semânticos).
