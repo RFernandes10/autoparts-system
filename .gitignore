@@ -52,3 +52,4 @@ desktop.ini
 
 # Git antigo do frontend
 frontend/.git/
+.vercel
