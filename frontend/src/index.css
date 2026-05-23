@@ -1,103 +1,213 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --color-bg-dark: var(--bg-dark);
+  --color-bg-medium: var(--bg-medium);
+  --color-bg-light: var(--bg-light);
+  --color-text-dark: var(--text-dark);
+  --color-text-light: var(--text-light);
+  --color-text-muted: var(--text-muted);
+  --color-primary-dark: var(--primary-dark);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-overlay: var(--overlay);
+  --color-border-hover: var(--border-hover);
+  --color-border-active: var(--border-active);
+}
 
 :root {
-  /* Layout */
   --sidebar-width: 260px;
   --sidebar-collapsed: 70px;
   --topbar-height: 70px;
 
-  /* Colors (Light Theme) */
-  --primary: #4f46e5; /* Indigo 600 */
-  --primary-dark: #4338ca; /* Indigo 700 */
-  --secondary: #14b8a6; /* Teal 500 */
-  --danger: #ef4444; /* Red 500 */
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --secondary: #14b8a6;
+  --primary-foreground: #ffffff;
+  --secondary-foreground: #ffffff;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --success: #22c55e;
+  --success-foreground: #ffffff;
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
 
-  --bg-dark: #f4f4f5; /* Zinc 100 */
-  --bg-medium: #e4e4e7; /* Zinc 200 */
-  --bg-light: #ffffff; /* White */
-  --border: #d4d4d8; /* Zinc 300 */
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
 
-  --text-light: #18181b; /* Zinc 900 */
-  --text-muted: #71717a; /* Zinc 500 */
-  --text-dark: #18181b; /* Zinc 900 */
+  --bg-dark: #f4f4f5;
+  --bg-medium: #e4e4e7;
+  --bg-light: #ffffff;
+  --border: #d4d4d8;
+  --input: #d4d4d8;
+  --ring: #4f46e5;
 
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 20px;
-  --spacing-xl: 30px;
+  --text-light: #18181b;
+  --text-muted: #71717a;
+  --text-dark: #18181b;
 
-  /* Effects */
-  --radius: 10px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
-  --transition: all 0.2s ease;
+  --surface-elevated: rgba(0, 0, 0, 0.02);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --border-hover: rgba(0, 0, 0, 0.12);
+  --border-active: rgba(0, 0, 0, 0.2);
+
+  --radius: 0.5rem;
 }
 
-html.dark {
-  /* Colors (Dark Theme) */
-  --primary: #6366f1; /* Indigo 500 */
-  --primary-dark: #818cf8; /* Indigo 400 */
-  --secondary: #2dd4bf; /* Teal 400 */
+.dark {
+  --primary: #6366f1;
+  --primary-dark: #818cf8;
+  --secondary: #2dd4bf;
+  --accent: #a78bfa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
 
-  --bg-dark: #18181b; /* Zinc 900 */
-  --bg-medium: #27272a; /* Zinc 800 */
-  --bg-light: #1f1f22; /* Custom slightly lighter Zinc */
-  --border: #3f3f46; /* Zinc 700 */
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
 
-  --text-light: #f4f4f5; /* Zinc 100 */
-  --text-muted: #a1a1aa; /* Zinc 400 */
-  --text-dark: #f4f4f5; /* Zinc 100 */
+  --bg-dark: #18181b;
+  --bg-medium: #27272a;
+  --bg-light: #1f1f22;
+  --border: #3f3f46;
+  --input: #3f3f46;
+  --ring: #6366f1;
+
+  --text-light: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --text-dark: #f4f4f5;
+
+  --surface-elevated: rgba(255, 255, 255, 0.03);
+  --overlay: rgba(0, 0, 0, 0.7);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(255, 255, 255, 0.16);
 }
 
 @layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground antialiased;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled) {
+    cursor: pointer;
   }
 }
 
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.35s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.25s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--muted) 25%, var(--card) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--muted-foreground); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ring); }
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  50% {
-    opacity: 0.6;
+  .animate-fade-in-up,
+  .animate-scale-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .skeleton-shimmer {
+    animation: none !important;
+    background: var(--muted);
   }
 }
-
-.animate-blink {
-  animation: blink 1.5s ease-in-out infinite;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.card {
-  @apply bg-white dark:bg-slate-900 rounded-xl shadow p-6;
-}
-
-
-
